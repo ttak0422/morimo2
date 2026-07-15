@@ -49,24 +49,28 @@ for file, kind in vim.fs.dir("lua/morimo2/groups/plugins") do
 end
 assert(#plugin_names > 0, "no plugin integrations found")
 
--- smoke: colorscheme + vim.g config (plugins / overrides) actually take effect
-vim.g.morimo2 = {
-  plugins = { gitsigns = true },
+-- integrations list stays in sync with groups/plugins/
+local morimo2 = require("morimo2")
+local listed = vim.deepcopy(morimo2.integrations)
+table.sort(listed)
+table.sort(plugin_names)
+assert(vim.deep_equal(listed, plugin_names), "init.lua M.integrations out of sync with groups/plugins/")
+
+-- smoke: works with zero config
+vim.cmd.colorscheme("morimo2")
+assert(vim.g.colors_name == "morimo2")
+assert(next(vim.api.nvim_get_hl(0, { name = "GitSignsAdd" })), "integrations not applied")
+assert(vim.g.terminal_color_15 == C.fg0)
+
+-- setup(): transparent + overrides take effect
+morimo2.setup({
+  transparent = true,
   overrides = function(hl)
     hl.Comment = { fg = "#ff0000" }
   end,
-}
+})
 vim.cmd.colorscheme("morimo2")
-assert(vim.g.colors_name == "morimo2")
 assert(vim.api.nvim_get_hl(0, { name = "Comment" }).fg == 0xff0000, "overrides hook was not applied")
-assert(next(vim.api.nvim_get_hl(0, { name = "GitSignsAdd" })), "plugins config was not applied")
-assert(vim.g.terminal_color_15 == C.fg0)
-
--- on-demand apply + persistence across colorscheme reload
-for _, name in ipairs(plugin_names) do
-  require("morimo2").apply(name)
-end
-vim.cmd.colorscheme("morimo2")
-assert(next(vim.api.nvim_get_hl(0, { name = "CmpItemAbbrMatch" })), "applied integration lost on reload")
+assert(vim.api.nvim_get_hl(0, { name = "Normal" }).bg == nil, "transparent was not applied")
 
 print("OK: core + " .. #plugin_names .. " integrations (" .. table.concat(plugin_names, ", ") .. ")")

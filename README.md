@@ -12,43 +12,32 @@ Successor of [morimo](https://github.com/ttak0422/morimo), rewritten in pure Lua
 ## Features
 
 - **Colorblind-Friendly**: Accessible for users with color blindness.
-- **Performance-Oriented**: Eager core, on-demand integrations. Integrations you don't apply are never read from disk. No cache, no compile step — nothing to invalidate.
+- **Zero-Config**: `:colorscheme morimo2` just works; `setup()` is optional.
 - **Borderless Compatibility**: Optimized for `border=none` settings, ensuring a clean appearance.
 
 ## Usage
 
 ```lua
--- optional configuration (must be set before :colorscheme)
-vim.g.morimo2 = {
-  -- Integrations applied at startup.
-  plugins = { gitsigns = true },
-  -- Remove the editor background color.
-  transparent = false,
-  -- Mutate highlight tables in place before they are applied.
-  -- Called once for the core table and once per applied integration,
-  -- so assign whole groups; don't read-modify keys that may be absent.
-  overrides = function(hl, palette)
-    hl.Comment = { fg = palette.grey2 }
-  end,
-}
 vim.cmd.colorscheme("morimo2")
 ```
 
-Integrations can also be applied on demand, which pairs well with lazy.nvim:
+Optionally configure before loading:
 
 ```lua
-{
-  "lewis6991/gitsigns.nvim",
-  config = function()
-    require("morimo2").apply("gitsigns")
-    require("gitsigns").setup()
+require("morimo2").setup({
+  -- Remove the editor background color.
+  transparent = false,
+  -- Mutate the final highlight table in place before it is applied.
+  overrides = function(hl, palette)
+    hl.Comment = { fg = palette.grey2 }
   end,
-}
+})
+vim.cmd.colorscheme("morimo2")
 ```
 
 ## Integrations
 
-Treesitter captures and diagnostics are part of the core — no integration needed.
+Always applied. Treesitter captures and diagnostics are part of the core.
 
 - [nvim-cmp (cmp)](https://github.com/hrsh7th/nvim-cmp)
 - [gitsigns.nvim (gitsigns)](https://github.com/lewis6991/gitsigns.nvim)

@@ -1,41 +1,34 @@
 local M = {}
 
--- Integrations applied so far; re-applied when the colorscheme reloads.
--- Module-local on purpose: writes to nested vim.g tables are silently dropped
--- (vim.g returns copies), which is exactly the bug morimo v1 had.
-local loaded = {}
+-- Applied unconditionally; kept in sync with groups/plugins/ by tests/run.lua.
+M.integrations = { "cmp", "dap", "gitsigns", "nvim-notify" }
 
-local function options()
-  return vim.tbl_extend("force", { plugins = {}, transparent = false }, vim.g.morimo2 or {})
-end
+local config = { transparent = false }
 
-local function set(hl, C, opts)
-  if opts.overrides then
-    opts.overrides(hl, C)
-  end
-  for group, attrs in pairs(hl) do
-    vim.api.nvim_set_hl(0, group, attrs)
-  end
-end
-
---- Apply an integration on demand, e.g. require("morimo2").apply("gitsigns").
---- Available names: files in lua/morimo2/groups/plugins/.
----@param name string
-function M.apply(name)
-  local C = require("morimo2.palette")
-  set(require("morimo2.groups.plugins." .. name)(C), C, options())
-  loaded[name] = true
+---@param opts morimo2.Config?
+function M.setup(opts)
+  config = vim.tbl_extend("force", config, opts or {})
 end
 
 --- Entry point, called by colors/morimo2.lua.
 function M.load()
   local C = require("morimo2.palette")
-  local opts = options()
 
   vim.cmd("highlight clear")
   vim.g.colors_name = "morimo2"
 
-  set(require("morimo2.groups.core")(C, opts), C, opts)
+  local hl = require("morimo2.groups.core")(C, config)
+  for _, name in ipairs(M.integrations) do
+    for group, attrs in pairs(require("morimo2.groups.plugins." .. name)(C)) do
+      hl[group] = attrs
+    end
+  end
+  if config.overrides then
+    config.overrides(hl, C)
+  end
+  for group, attrs in pairs(hl) do
+    vim.api.nvim_set_hl(0, group, attrs)
+  end
 
   local terminal = {
     C.bg0,
@@ -57,15 +50,6 @@ function M.load()
   }
   for i, color in ipairs(terminal) do
     vim.g["terminal_color_" .. (i - 1)] = color
-  end
-
-  for name, enabled in pairs(opts.plugins) do
-    if enabled then
-      loaded[name] = true
-    end
-  end
-  for name in pairs(loaded) do
-    M.apply(name)
   end
 end
 
