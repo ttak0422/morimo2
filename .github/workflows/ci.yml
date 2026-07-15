@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check .
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+      - name: Run tests
+        run: nvim --clean -l tests/run.lua
+      - name: Check extras freshness
+        run: |
+          nvim --clean -l scripts/build.lua
+          test -z "$(git status --porcelain extras/)" || { git status extras/; exit 1; }
+
+  # Requires repo setting: Settings > Actions > General >
+  # "Allow GitHub Actions to create and approve pull requests" (off by default).
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
