@@ -14,6 +14,9 @@ end
 function M.load()
   local C = require("morimo2.palette")
 
+  -- must precede "highlight clear": it decides which default colors undefined
+  -- groups fall back to, and the TUI may have auto-detected "light"
+  vim.o.background = "dark"
   vim.cmd("highlight clear")
   vim.g.colors_name = "morimo2"
 

@@ -15,19 +15,19 @@ return {
   -- palette
   lightRed = "#ff6e6e",
   red = "#d76e6e",
-  darkRed = "#a25454",
+  darkRed = "#b06060", -- was #a25454; raised to 3.2:1 on bg0 for diagnostics
   lightGreen = "#98c593",
   green = "#679f68",
   darkGreen = "#4a6e4a",
   seaGreen = "#729e7b",
   blue = "#789cbc",
   lightBlue = "#9bb9d4",
-  darkBlue = "#4d6b83",
+  darkBlue = "#64829b", -- was #4d6b83; raised to 3.6:1 on bg0 for diagnostics
   slateBlue = "#607597",
   cyan = "#7aa7b3",
   lightCyan = "#a0c8cc",
-  darkCyan = "#54757b",
-  magenta = "#b384b1",
+  darkCyan = "#5b7d83", -- was #54757b; raised to 3.2:1 on bg0 for diagnostics
+  magenta = "#9b6499", -- was #b384b1; darkened so ANSI magenta/blue stay apart under red-green CVD
   lightMagenta = "#d0a3d0",
   darkMagenta = "#8a5b8a",
   yellow = "#d3c785",
@@ -38,7 +38,7 @@ return {
   purple = "#a688a8",
   violet = "#8b85aa",
   -- sub palette
-  sub_red0 = "#793a42",
+  sub_red0 = "#61252e", -- was #793a42; darkened so DiffDelete/DiffAdd separate under red-green CVD
   sub_red1 = "#8c4a52",
   sub_red2 = "#a15963",
   sub_red3 = "#b56974",

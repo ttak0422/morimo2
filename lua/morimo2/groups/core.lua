@@ -19,16 +19,19 @@ return function(C, opts)
     DiffChange = { bg = C.sub_blue0 },
     DiffDelete = { bg = C.sub_red0 },
     DiffText = { fg = C.bg0, bg = C.fg0 },
+    -- bg=green not lightGreen: lightGreen is nearly identical to DiffText's fg0
+    -- under CVD simulation (dE2000 ~5); green keeps a clear lightness gap
+    DiffTextAdd = { fg = C.bg0, bg = C.green },
     -- opaque: hide "~" by matching bg; transparent: bg is unknown, so keep it barely visible
     EndOfBuffer = { fg = opts.transparent and C.bg3 or C.bg0 },
     TermCursor = { link = "Cursor" },
-    TermCursorNC = { link = "Cursor" },
     ErrorMsg = { fg = C.darkRed, bold = true, underline = true },
     WinSeparator = { fg = C.bg2, bg = "NONE" },
     Folded = { fg = C.grey1 },
     FoldColumn = { fg = C.grey1 },
     SignColumn = { fg = C.fg0 },
     IncSearch = { fg = C.bg0, bg = C.lightGreen },
+    CurSearch = { fg = C.bg0, bg = C.lightYellow },
     Substitute = { fg = C.bg0, bg = C.yellow },
     LineNr = { fg = C.grey0 },
     CursorLineNr = { fg = C.fg0, bold = true },
@@ -37,9 +40,13 @@ return function(C, opts)
     MsgArea = { link = "StatusLine" },
     MsgSeparator = { bg = C.bg2 },
     MoreMsg = { fg = C.yellow, bold = true },
+    -- seaGreen not lightGreen: needs to stay distinguishable from the yellow
+    -- MoreMsg/WarningMsg under red-green CVD (lightGreen/yellow dE2000 ~5)
+    OkMsg = { fg = C.seaGreen, bold = true },
     NonText = { fg = C.grey0 },
     Normal = { fg = C.fg0, bg = opts.transparent and "NONE" or C.bg0 },
     NormalFloat = { fg = C.fg0, bg = opts.transparent and "NONE" or C.bg1 },
+    FloatBorder = { fg = C.grey1, bg = opts.transparent and "NONE" or C.bg1 },
     FloatTitle = { fg = C.lightBlue, bold = true },
     FloatFooter = { fg = C.bg2 },
     NormalNC = { link = "Normal" },
@@ -47,10 +54,16 @@ return function(C, opts)
     PmenuSel = { fg = C.bg0, bg = C.green },
     PmenuSbar = { bg = C.bg1 },
     PmenuThumb = { bg = C.grey1 },
+    PmenuMatch = { fg = C.fg0, bold = true },
+    PmenuMatchSel = { fg = C.bg0, bold = true },
+    ComplMatchIns = { link = "PmenuMatch" },
+    PreInsert = { fg = C.grey2 },
     Question = { link = "MoreMsg" },
     QuickFixLine = { fg = C.purple },
     Search = { fg = C.bg0, bg = C.cyan },
     SpecialKey = { fg = C.fg1 },
+    SnippetTabstop = { bg = C.bg3 },
+    SnippetTabstopActive = { bg = C.sub_blue0 },
     SpellBad = { fg = C.red, undercurl = true, sp = C.red },
     SpellCap = { fg = C.blue, undercurl = true, sp = C.blue },
     SpellLocal = { fg = C.cyan, undercurl = true, sp = C.cyan },
@@ -110,6 +123,12 @@ return function(C, opts)
     Ignore = { fg = C.grey1 },
     Error = { fg = C.red },
     Todo = { fg = C.purple, italic = true },
+    -- diff-syntax groups; also the fallback for @diff.* captures.
+    -- lightGreen/red not green/red: green vs red collapses under deuteranopia
+    -- (dE2000 2.3); the lightness gap (L* 75 vs 59) keeps them apart
+    Added = { fg = C.lightGreen },
+    Changed = { fg = C.lightBlue },
+    Removed = { fg = C.red },
     -- ┌─────────────┐
     -- │ Diagnostics │
     -- └─────────────┘
@@ -117,12 +136,15 @@ return function(C, opts)
     DiagnosticWarn = { fg = C.darkYellow },
     DiagnosticInfo = { fg = C.darkBlue },
     DiagnosticHint = { fg = C.darkCyan },
-    DiagnosticOk = { fg = C.darkGreen },
+    -- seaGreen not darkGreen: keeps a lightness gap from DiagnosticError under
+    -- red-green CVD and clears 4.5:1 on bg0
+    DiagnosticOk = { fg = C.seaGreen },
     DiagnosticUnderlineError = { fg = C.darkRed, undercurl = true },
     DiagnosticUnderlineWarn = { fg = C.darkYellow, undercurl = true },
     DiagnosticUnderlineInfo = { fg = C.darkBlue, undercurl = true },
     DiagnosticUnderlineHint = { fg = C.darkCyan, undercurl = true },
-    DiagnosticUnderlineOk = { fg = C.darkGreen, undercurl = true },
+    DiagnosticUnderlineOk = { fg = C.seaGreen, undercurl = true },
+    DiagnosticDeprecated = { sp = C.darkRed, strikethrough = true },
     -- ┌────────────────────────────────────────────────────────┐
     -- │ Treesitter captures (core since 0.11, not a "plugin")  │
     -- └────────────────────────────────────────────────────────┘
