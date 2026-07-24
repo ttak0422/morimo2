@@ -37,7 +37,9 @@ return function(C, opts)
     CursorLineNr = { fg = C.fg0, bold = true },
     MatchParen = { bg = C.bg2, bold = true },
     ModeMsg = { fg = C.fg0, bold = true },
-    MsgArea = { link = "StatusLine" },
+    -- fg0 not StatusLine's grey1: cmdline arguments (unhighlighted by treesitter)
+    -- render in this fg, and grey1 on bg1 is ~3.5:1 — unreadable, worse under CVD
+    MsgArea = { fg = C.fg0, bg = C.bg1 },
     MsgSeparator = { bg = C.bg2 },
     MoreMsg = { fg = C.yellow, bold = true },
     -- seaGreen not lightGreen: needs to stay distinguishable from the yellow
