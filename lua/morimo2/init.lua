@@ -1,7 +1,7 @@
 local M = {}
 
 -- Applied unconditionally; kept in sync with groups/plugins/ by tests/run.lua.
-M.integrations = { "cmp", "dap", "gitsigns", "nvim-notify" }
+M.integrations = { "cmp", "dap", "gitsigns", "git-conflict", "nvim-notify" }
 
 local config = { transparent = false }
 

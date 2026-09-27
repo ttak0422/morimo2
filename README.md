@@ -40,6 +40,7 @@ vim.cmd.colorscheme("morimo2")
 Always applied. Treesitter captures and diagnostics are part of the core.
 
 - [nvim-cmp (cmp)](https://github.com/hrsh7th/nvim-cmp)
+- [git-conflict.nvim](https://github.com/akinsho/git-conflict.nvim)
 - [gitsigns.nvim (gitsigns)](https://github.com/lewis6991/gitsigns.nvim)
 - [nvim-dap-ui (dap)](https://github.com/rcarriga/nvim-dap-ui)
 - [nvim-notify (nvim-notify)](https://github.com/rcarriga/nvim-notify)

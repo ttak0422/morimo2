@@ -15,13 +15,15 @@ return function(C, opts)
     CursorColumn = { link = "CursorLine" },
     CursorLine = { bg = C.bg2 },
     Directory = { fg = C.green },
-    DiffAdd = { bg = C.sub_green0 },
-    DiffChange = { bg = C.sub_blue0 },
-    DiffDelete = { bg = C.sub_red0 },
-    DiffText = { fg = C.bg0, bg = C.fg0 },
+    -- Explicit xterm-256 fallbacks: RGB-only Diff groups have no terminal color
+    -- attributes when termguicolors is disabled.
+    DiffAdd = { bg = C.sub_green0, ctermbg = 22 },
+    DiffChange = { bg = C.sub_blue0, ctermbg = 24 },
+    DiffDelete = { bg = C.sub_red0, ctermbg = 52 },
+    DiffText = { fg = C.bg0, bg = C.fg0, ctermfg = 236, ctermbg = 151 },
     -- bg=green not lightGreen: lightGreen is nearly identical to DiffText's fg0
     -- under CVD simulation (dE2000 ~5); green keeps a clear lightness gap
-    DiffTextAdd = { fg = C.bg0, bg = C.green },
+    DiffTextAdd = { fg = C.bg0, bg = C.green, ctermfg = 236, ctermbg = 71 },
     -- opaque: hide "~" by matching bg; transparent: bg is unknown, so keep it barely visible
     EndOfBuffer = { fg = opts.transparent and C.bg3 or C.bg0 },
     TermCursor = { link = "Cursor" },
@@ -128,9 +130,9 @@ return function(C, opts)
     -- diff-syntax groups; also the fallback for @diff.* captures.
     -- lightGreen/red not green/red: green vs red collapses under deuteranopia
     -- (dE2000 2.3); the lightness gap (L* 75 vs 59) keeps them apart
-    Added = { fg = C.lightGreen },
-    Changed = { fg = C.lightBlue },
-    Removed = { fg = C.red },
+    Added = { fg = C.lightGreen, ctermfg = 114 },
+    Changed = { fg = C.lightBlue, ctermfg = 110 },
+    Removed = { fg = C.red, ctermfg = 167 },
     -- ┌─────────────┐
     -- │ Diagnostics │
     -- └─────────────┘

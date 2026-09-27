@@ -1,6 +1,7 @@
 -- Run from the repo root: nvim --clean -l tests/run.lua
 -- ponytail: plain assert script, no test framework on purpose.
 vim.opt.runtimepath:prepend(vim.uv.cwd())
+vim.o.termguicolors = false -- exercise terminal colors without truecolor
 
 local C = require("morimo2.palette")
 
@@ -61,6 +62,52 @@ vim.cmd.colorscheme("morimo2")
 assert(vim.g.colors_name == "morimo2")
 assert(next(vim.api.nvim_get_hl(0, { name = "GitSignsAdd" })), "integrations not applied")
 assert(vim.g.terminal_color_15 == C.fg0)
+
+-- Diff and merge-conflict highlights need cterm colors when truecolor is off.
+local terminal_attrs = {
+  { "DiffAdd", "background" },
+  { "DiffChange", "background" },
+  { "DiffDelete", "background" },
+  { "DiffText", "background" },
+  { "DiffText", "foreground" },
+  { "DiffTextAdd", "background" },
+  { "DiffTextAdd", "foreground" },
+  { "Added", "foreground" },
+  { "Changed", "foreground" },
+  { "Removed", "foreground" },
+  { "GitSignsAdd", "foreground" },
+  { "GitSignsChange", "foreground" },
+  { "GitSignsDelete", "foreground" },
+  { "GitConflictCurrent", "background", true },
+  { "GitConflictCurrent", "foreground" },
+  { "GitConflictIncoming", "background", true },
+  { "GitConflictIncoming", "foreground" },
+  { "GitConflictAncestor", "background", true },
+  { "GitConflictAncestor", "foreground" },
+  { "GitConflictCurrentLabel", "background" },
+  { "GitConflictCurrentLabel", "foreground" },
+  { "GitConflictIncomingLabel", "background" },
+  { "GitConflictIncomingLabel", "foreground" },
+  { "GitConflictAncestorLabel", "background" },
+  { "GitConflictAncestorLabel", "foreground" },
+}
+local terminal_backgrounds = {}
+for _, spec in ipairs(terminal_attrs) do
+  local group, attr = spec[1], spec[2]
+  assert(next(vim.api.nvim_get_hl(0, { name = group })), group .. " is not defined")
+  local attrs = vim.api.nvim_get_hl_by_name(group, false)
+  assert(attrs[attr], group .. " has no cterm " .. attr .. " for non-truecolor terminals")
+  if spec[3] then
+    assert(not terminal_backgrounds[attrs[attr]], group .. " shares a cterm diff background")
+    terminal_backgrounds[attrs[attr]] = true
+  end
+end
+
+for _, side in ipairs({ "Current", "Incoming", "Ancestor" }) do
+  local section = vim.api.nvim_get_hl_by_name("GitConflict" .. side, false)
+  local label = vim.api.nvim_get_hl_by_name("GitConflict" .. side .. "Label", false)
+  assert(label.background == section.background, side .. " conflict label must share its section color")
+end
 
 -- setup(): transparent + overrides take effect
 morimo2.setup({
